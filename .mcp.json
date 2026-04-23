@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "cve": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/mukul975/cve-mcp-server.git@a78d7200931b29eb803c5ca0036ccab6fa2e58f8",
+        "cve-mcp"
+      ],
+      "env": {
+        "NVD_API_KEY": "${NVD_API_KEY}",
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "VULNCHECK_TOKEN": "${VULNCHECK_TOKEN}"
+      }
+    }
+  }
+}
