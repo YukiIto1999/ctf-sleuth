@@ -1,0 +1,45 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Nix / devenv
+.devenv/
+.direnv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# AI
+.claude/*
+!.claude/skills/
+.playwright-mcp/
+
+# Environment
+.env
+.env.local
+.envrc.local
+
+# Local
+docs/
+writeups/
+challenges/
+
+
+
+

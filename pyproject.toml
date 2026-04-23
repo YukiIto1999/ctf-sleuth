@@ -1,0 +1,146 @@
+[project]
+name = "ctf-sleuth"
+version = "0.1.0"
+description = "Task-driven AI security framework (CTF / OSINT / artifact analysis / HTB) — solves, audits, and investigates via Claude Agent SDK"
+readme = "README.md"
+requires-python = ">=3.14"
+license = {file = "LICENSE"}
+authors = [{name = "YukiIto1999"}]
+dependencies = [
+    "pydantic-ai[bedrock,openai,google]",
+    "pydantic-settings",
+    "genai-prices",
+    "boto3",
+    "aiodocker",
+    "claude-agent-sdk",
+    "httpx",
+    "pyyaml",
+    "rich",
+    "click",
+    "markdownify",
+]
+
+[project.scripts]
+sleuth = "cli.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0",
+    "pytest-asyncio>=1.3",
+    "ruff>=0.14",
+    "ty>=0.0.2",
+    "import-linter>=2.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/contexts",
+    "src/workflows",
+    "src/foundation",
+    "src/layers",
+    "src/shared",
+    "src/cli",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "N", "C4", "PTH"]
+ignore = ["E501", "SIM105", "SIM115", "PTH123"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["contexts", "workflows", "foundation", "layers", "shared", "cli"]
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+invalid-argument-type = "ignore"
+
+[tool.ty.environment]
+python-version = "3.14"
+root = ["src"]
+
+[tool.importlinter]
+root_packages = ["contexts", "workflows", "foundation", "layers", "shared", "cli"]
+
+[[tool.importlinter.contracts]]
+name = "shared has no outgoing deps"
+type = "forbidden"
+source_modules = ["shared"]
+forbidden_modules = ["contexts", "workflows", "foundation", "layers", "cli"]
+
+[[tool.importlinter.contracts]]
+name = "platform only depends on shared"
+type = "forbidden"
+source_modules = ["foundation"]
+forbidden_modules = ["contexts", "workflows", "layers", "cli"]
+
+[[tool.importlinter.contracts]]
+name = "layers must not depend on slices or runners"
+type = "forbidden"
+source_modules = ["layers"]
+forbidden_modules = [
+    "cli",
+    "workflows",
+    "contexts.ctf_challenge.solve",
+    "contexts.ctf_challenge.coordinate",
+    "contexts.ctf_challenge.archive",
+    "contexts.ctf_challenge.runner",
+    "contexts.htb_machine.attack",
+    "contexts.htb_machine.runner",
+    "contexts.artifact_analysis.analyze",
+    "contexts.artifact_analysis.runner",
+    "contexts.osint_investigation.investigate",
+    "contexts.osint_investigation.runner",
+]
+
+[[tool.importlinter.contracts]]
+name = "domain purity"
+type = "forbidden"
+source_modules = [
+    "contexts.ctf_challenge.domain",
+    "contexts.htb_machine.domain",
+    "contexts.artifact_analysis.domain",
+    "contexts.osint_investigation.domain",
+]
+forbidden_modules = ["layers", "foundation", "workflows", "cli"]
+
+[[tool.importlinter.contracts]]
+name = "services must be pure interfaces"
+type = "forbidden"
+source_modules = [
+    "contexts.ctf_challenge.services",
+    "contexts.htb_machine.services",
+    "contexts.artifact_analysis.services",
+]
+forbidden_modules = ["layers", "foundation", "workflows", "cli"]
+
+[[tool.importlinter.contracts]]
+name = "BC independence"
+type = "independence"
+modules = [
+    "contexts.ctf_challenge",
+    "contexts.htb_machine",
+    "contexts.artifact_analysis",
+    "contexts.osint_investigation",
+]
+
+[[tool.importlinter.contracts]]
+name = "workflows must not depend on cli"
+type = "forbidden"
+source_modules = ["workflows"]
+forbidden_modules = ["cli"]

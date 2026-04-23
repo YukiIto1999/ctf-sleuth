@@ -1,0 +1,9 @@
+# Minimal sandbox image for Level 2 smoke test.
+# ctf-sandbox の本物 (pwntools/sagemath/radare2 等) は build が重いため,
+# smoke test では bash + curl + python3 だけの最小環境を使う.
+FROM ubuntu:22.04
+RUN apt-get update && apt-get install -y \
+    bash curl python3 python3-pip coreutils \
+    binutils file xxd \
+    && rm -rf /var/lib/apt/lists/*
+CMD ["sleep", "infinity"]
