@@ -1,6 +1,6 @@
 ---
 name: firmware-iot-security
-description: IoT device の総合 security assessment (firmware extraction / file system 解析 / 内部 malware analysis / network / radio / cloud companion app / hardware port) を統合する。CTF hardware / pentest / 製品 audit で発火。binwalk extraction / 内部 malware 解析の深掘りは references/ 参照
+description: IoT device の総合 security assessment。firmware extraction / 内部 malware は references/ で深掘り、network / hardware port は本体 phase で扱う、companion app は android-security/ios-security へ、radio (subGHz / WiFi) は subghz-sdr / wifi-security へ offload。CTF hardware / pentest / 製品 audit で発火
 category: hardware
 tags:
   - iot

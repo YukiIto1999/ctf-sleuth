@@ -1,6 +1,6 @@
 ---
 name: blockchain-security
-description: smart contract / DeFi / NFT / bridge / wallet 含む blockchain 全般のセキュリティ。Ethereum 以外 (Solana / Cosmos / Bitcoin / Move / Cairo) を含む横断 skill。CTF blockchain / bug bounty で発火。
+description: smart contract / DeFi / NFT / bridge / wallet 含む blockchain 全般のセキュリティ。Ethereum 深掘りは references/ethereum.md、Solana / Anchor 深掘りは references/solana.md、Cosmos / Bitcoin / Move / Cairo は本体 phase 内で扱う。CTF blockchain / bug bounty で発火
 category: crypto
 tags:
   - blockchain

@@ -29,6 +29,7 @@ provider / 観点別の深掘りは references/ を参照:
 - AWS Athena 経由の log forensics: `references/aws-athena.md`
 - AWS Detective の behavior graph hunting: `references/aws-detective.md`
 - AWS credential 漏洩検出 (TruffleHog 等): `references/aws-credential-exposure.md`
+- GCP project / org の IAM / SA key / 大量 storage access / cryptomining / log sink 改竄 hunting: `references/gcp.md`
 - Azure Activity / Sign-In Log 解析: `references/azure-activity.md`
 - Azure 横展開 (token theft / cross-tenant pivot): `references/azure-lateral.md`
 - Azure service principal abuse: `references/azure-sp-abuse.md`
