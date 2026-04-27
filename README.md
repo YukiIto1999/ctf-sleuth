@@ -1,10 +1,12 @@
 # ctf-sleuth
 
-> Claude Agent SDK を用いた CTF / OSINT / ファイル解析 / HackTheBox machine の個人演習用セキュリティフレームワーク
-
 ## 概要
 
-入力文字列 (URL / ファイルパス / IP / ドメイン / 自由テキスト) を自動分類し、4 種類の task runner のいずれかを起動する。各 runner は sandbox の要否や必須パラメータが異なる。LLM は Claude Max サブスクのみを利用し、API 課金は発生しない。
+Claude Agent SDK を用いた CTF / OSINT / HackTheBox / セキュリティ調査の個人演習用フレームワーク。
+
+入力文字列 (URL / ファイルパス / IP / ドメイン / 自由テキスト) を自動分類し、4 種類の task runner のいずれかを起動する。
+各 runner は sandbox の要否や必須パラメータが異なる。
+LLM は Claude Max サブスクのみを利用し、API 課金は発生しない。
 
 ## 対応タスク
 
@@ -43,7 +45,8 @@ src/
 └── cli/               # Composition Root + エントリ
 ```
 
-依存方向は `import-linter` で CI 強制。詳細は [CLAUDE.md](CLAUDE.md) 参照。
+依存方向は `import-linter` で CI 強制。
+詳細は [CLAUDE.md](CLAUDE.md) 参照。
 
 ## 成果物
 
