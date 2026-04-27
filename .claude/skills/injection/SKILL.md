@@ -1,6 +1,6 @@
 ---
 name: injection
-description: SQL / NoSQL / OS command / SSTI / XXE / LDAP / XPath など注入系脆弱性の判別、深掘り、PoC まで一連で扱う。CTF web の入口検出 / HTB の web 侵入 / bug bounty で発火。SQLi / NoSQLi の深掘りは references/ を参照
+description: SQL / NoSQL / OS command / SSTI / XXE / LDAP / XPath など注入系脆弱性の判別、深掘り、PoC まで一連で扱う。SQLi / NoSQLi の深掘りは references/ を参照、OS command / SSTI / XXE / LDAP / XPath は本体 Phase 3 で簡潔に扱う。CTF web の入口検出 / HTB の web 侵入 / bug bounty で発火
 category: web
 tags:
   - injection

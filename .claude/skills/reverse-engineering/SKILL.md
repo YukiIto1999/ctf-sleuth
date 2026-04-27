@@ -1,6 +1,6 @@
 ---
 name: reverse-engineering
-description: 任意の binary (ELF / PE / Mach-O / .dex / .class) を disassembly + decompilation + behavior 分析で読み解く一般 skill。CTF rev、artifact_analysis BC の binary 系、HTB の入手 binary 解析で発火。
+description: 任意の binary を disassembly + decompilation + behavior 分析で読み解く一般 skill。format / 言語別の深掘りは references/ (ELF=linux-elf / .NET PE=dotnet / Go=golang / Rust=rust / packed=packed-upx / ransomware=ransomware / PDF=pdf / Cobalt Strike=cobaltstrike-* / C2 protocol=c2-protocol / malware traffic=malware-traffic / 一般 RE=ghidra)、generic PE / Mach-O / .dex / .class は本体 Phase で扱う (.dex / .class の deep は android-security / ios-security)。CTF rev、artifact_analysis BC の binary 系、HTB の入手 binary 解析で発火
 category: reverse
 tags:
   - reverse

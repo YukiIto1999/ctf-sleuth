@@ -23,7 +23,7 @@ tags:
 
 **使わない場面**: cloud service log の hunting (anomaly detection / behavioral hunt) (→ `detection-cloud-anomalies`)、container forensic 単独 (→ `container-forensics`)。
 
-variant の深掘りは references/ を参照: AWS CloudTrail から侵害 chain を再構成 = `references/aws-cloudtrail.md`、Falco runtime での container syscall hunt = `references/k8s-runtime-falco.md`、Google Drive / OneDrive / Dropbox / Box の SaaS storage acquisition = `references/saas-storage-acquisition.md`。
+variant の深掘りは references/ を参照: AWS CloudTrail から侵害 chain を再構成 = `references/aws-cloudtrail.md`、Azure Activity / Audit / Sign-In log の triage = `references/azure.md`、GCP Cloud Audit Logs / IAM 改竄 = `references/gcp.md`、Falco runtime での container syscall hunt = `references/k8s-runtime-falco.md`、Google Drive / OneDrive / Dropbox / Box の SaaS storage acquisition = `references/saas-storage-acquisition.md`。
 
 ## Approach / Workflow
 
