@@ -1,12 +1,15 @@
 # .claude/skills — 統合 skill 集
 
-CTF / OSINT CTF / セキュリティ演習で使う skill を統一フォーマットで集約したディレクトリ。Claude Agent SDK (および Claude Code) が自動ロードする。
+CTF / OSINT CTF / セキュリティ演習で使う skill を統一フォーマットで集約したディレクトリ。
+Claude Agent SDK (および Claude Code) が自動ロードする。
 
-全 skill は MIT-original で書かれている。許可 skill 名集合と src/ 側の参照整合は `src/foundation/skills/registry.py` + `tests/foundation/skills/test_registry.py` で機械検証する (`just archcheck` / `just test`)。
+全 skill は MIT-original で書かれている。
+許可 skill 名集合と src/ 側の参照整合は `src/foundation/skills/registry.py` + `tests/foundation/skills/test_registry.py` で機械検証する (`just archcheck` / `just test`)。
 
 ## 統一フォーマット
 
-各 skill は `.claude/skills/<kebab-name>/SKILL.md` に配置する。variant 別の deep-dive は `.claude/skills/<name>/references/<variant>.md`。
+各 skill は `.claude/skills/<kebab-name>/SKILL.md` に配置する。
+variant 別の deep-dive は `.claude/skills/<name>/references/<variant>.md`。
 
 ```yaml
 ---
@@ -35,8 +38,11 @@ tags: [<最大 8 個>]
 
 ### フィールド仕様
 
-- **name**: ディレクトリ名と完全一致させる。kebab-case
-- **description**: Claude が skill 発火を判断する主材料。「いつ使うか」を明示する。曖昧語 ("helpful", "useful") は避け、具体トリガを書く
+- **name**: ディレクトリ名と完全一致させる。
+  kebab-case
+- **description**: Claude が skill 発火を判断する主材料。
+  「いつ使うか」を明示する。
+  曖昧語 ("helpful", "useful") は避け、具体トリガを書く
 - **category**: 下表から **1 つ** だけ選ぶ (必須)
 
 | category | 用途 |
@@ -56,10 +62,11 @@ tags: [<最大 8 個>]
 | `cloud` | クラウド (AWS / Azure / GCP / Kubernetes) |
 | `intel` | threat intelligence / IOC / attribution |
 | `defender` | blue team の検知 / hunting / detection rule |
-| `malware` | マルウェア解析 |
 | `general` | 横断的 / 分類困難 |
 
-- **tags**: 任意。検索性向上用。最大 8 個、kebab-case
+- **tags**: 任意。
+  検索性向上用。
+  最大 8 個、kebab-case
 
 ### 本文節
 
@@ -69,7 +76,8 @@ tags: [<最大 8 個>]
 
 ### Domain organization
 
-複数 variant を扱う skill は **parent SKILL.md (workflow + variant 選択 decision tree) + `references/<variant>.md` (variant 別 deep dive)** の構成を取る。SKILL.md は概ね 500 行以下を目安、超えるなら variant を references に分離する。
+複数 variant を扱う skill は **parent SKILL.md (workflow + variant 選択 decision tree) + `references/<variant>.md` (variant 別 deep dive)** の構成を取る。
+SKILL.md は概ね 500 行以下を目安、超えるなら variant を references に分離する。
 
 ## ディレクトリ構成の例
 
@@ -100,8 +108,11 @@ tags: [<最大 8 個>]
 
 ## 追加・削除のルール
 
-- **追加**: 新 skill の `<name>/SKILL.md` を作成し、`src/foundation/skills/registry.py` の `_NAMES` に追記する。`tests/foundation/skills/test_registry.py` が disc と registry の一致を検証する
-- **削除**: ディレクトリを `rm -rf` し、registry / src/contexts の参照を同時更新する。test_registry が乖離を検知する
+- **追加**: 新 skill の `<name>/SKILL.md` を作成し、`src/foundation/skills/registry.py` の `_NAMES` に追記する。
+  `tests/foundation/skills/test_registry.py` が disc と registry の一致を検証する
+- **削除**: ディレクトリを `rm -rf` し、registry / src/contexts の参照を同時更新する。
+  test_registry が乖離を検知する
 - **改名 / 統合**: 同様に registry と src/contexts を同時更新
 
-新 skill の作成は `skill-creator` (Anthropic 公式 plugin) に従う。既存 skill の改善は `empirical-prompt-tuning` (mizchi/skills) で 2 面評価 + iterate する。
+新 skill の作成は `skill-creator` (Anthropic 公式 plugin) に従う。
+既存 skill の改善は `empirical-prompt-tuning` (mizchi/skills) で 2 面評価 + iterate する。
