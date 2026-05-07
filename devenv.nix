@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   languages.python = {
     enable = true;
-    version = "3.12";
+    version = "3.14";
     uv.enable = true;
   };
 
