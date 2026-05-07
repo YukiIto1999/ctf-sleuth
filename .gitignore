@@ -6,6 +6,7 @@ Desktop.ini
 # Nix / devenv
 .devenv/
 .direnv/
+.devenv.flake.nix
 
 # IDE
 .vscode/
