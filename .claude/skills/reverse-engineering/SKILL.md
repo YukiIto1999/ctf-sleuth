@@ -96,6 +96,17 @@ r2 -A binary
 
 IDA Pro / Binary Ninja がある場合は GUI で type recovery を進める。
 
+binutils 最低限環境向け fallback (Ghidra / radare2 / IDA 不在時):
+
+```bash
+objdump -d -M intel binary | less                       # 全 disasm
+objdump -d -M intel --disassemble=<symbol> binary       # 関数単位 (symbol を 1 つだけ指定可、 複数並べると最初しか効かない)
+objdump -d -M intel --start-address=0xXXXX --stop-address=0xYYYY binary   # アドレス範囲で関数本体を切出す
+objdump -s -j .rodata binary                            # .rodata の hex dump (encode 済み定数の確認に有用)
+nm binary                                                # シンボル一覧
+nm -D binary                                             # 動的シンボルのみ
+```
+
 ### Phase 4 — 主要観点
 
 ```
@@ -182,6 +193,13 @@ ltrace / strace / x64dbg / WinDbg
 angr / Z3 / KLEE
 WebFetch
 Bash (sandbox)
+
+# binutils + python3 のみの最低限環境向け fallback:
+#   file 不在        → readelf -h で arch / class 判定
+#   checksec 不在    → readelf -l (NX) / readelf -d (RELRO) / nm の __stack_chk_fail (Canary)
+#   Ghidra / radare2 / IDA 不在 → objdump -d -M intel + --start-address / --stop-address
+#   gdb / strace / ltrace 不在  → 静的解析 + Python solver
+#   angr 不在        → 単純 XOR / 算術 check は Python で総当り or 逆算
 ```
 
 ## Related Skills

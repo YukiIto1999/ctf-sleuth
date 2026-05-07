@@ -28,6 +28,8 @@ tags:
 
 source / binary を grep して暗号 routine の存在箇所を特定:
 
+ライブラリ呼出 grep:
+
 ```bash
 grep -rE 'AES|RSA|ECDSA|ECDH|HMAC|SHA|MD5|RC4|DES|3DES|ChaCha|Poly1305' src/
 grep -rE 'random|Random|rand\(|/dev/urandom|/dev/random|secrets\.|os\.urandom|crypto\.randomBytes' src/
@@ -36,7 +38,19 @@ grep -rE 'jwt|JWS|JWE|JOSE' src/
 grep -rE 'TLS|SSL|HTTPS|certificate|x509' src/
 ```
 
+構造 / 演算子 / 自作実装 grep (ライブラリ grep が拾わない anti-pattern を補う):
+
+```bash
+grep -rE 'def (encrypt|decrypt|cipher|sign|verify)' src/                          # 自作 cipher / signer
+grep -rE '(hmac\.new|hashlib\.).*\.(digest|hexdigest)\(\)\s*==' src/              # timing-leaking compare
+grep -rE 'random\.(seed|choice|randint|random|shuffle|sample|getrandbits)' src/   # 非 secure RNG (Python)
+grep -rEi '(KEY|SECRET|TOKEN|PASSWORD|API_KEY)\s*=\s*[bru]?["'\''][^"'\'']{8,}' src/  # hard-coded key 候補
+grep -rE 'nonce\s*=.*(len\(|time\(|^0$|counter|\\.id)' src/                       # predictable nonce
+```
+
 native binary は ghidra / IDA で `findcrypt` / signsrch。
+
+自前 cipher / hard-coded key は SAST 横断観点でも検出対象 (`source-code-scanning` Phase 6 / 8 と併用)。 本 skill は crypto に特化した具体 query を提供する。
 
 ### Phase 2 — algorithm 評価
 
@@ -46,8 +60,16 @@ native binary は ghidra / IDA で `findcrypt` / signsrch。
 | asymmetric | RSA-2048+ / Ed25519 / X25519 / P-256 | RSA-1024 / 自前 ECC |
 | hash | SHA-256 / SHA-3 / BLAKE2 | MD5 / SHA-1 |
 | MAC | HMAC-SHA-256 / Poly1305 | CRC / 自作 keyed hash |
-| KDF | Argon2id / scrypt / bcrypt / PBKDF2 (>= 600k iter) | 単純 SHA / 短 iter |
+| KDF | Argon2id / scrypt / bcrypt / PBKDF2 | 単純 SHA / 短 iter |
 | signing | EdDSA / ECDSA P-256 / RSA-PSS | RSA-PKCS#1 v1.5 (limited cases) |
+
+modern 受入閾値 (2026):
+
+- symmetric: AES key ≥128 bit、 AEAD nonce 96 bit、 nonce 必ず unique
+- asymmetric: RSA modulus ≥2048 (3072 推奨)、 ECC ≥P-256
+- hash: digest ≥256 bit、 MAC tag ≥128 bit (比較は constant-time)
+- KDF: PBKDF2-SHA-256 ≥600k iter (OWASP 2023+) / scrypt N≥2^17 r=8 p=1 / Argon2id t≥2 m≥64MiB p≥1 / bcrypt cost≥12
+- signing: Ed25519 default、 signature ≥256 bit、 ECDSA は RFC 6979 (deterministic k) 必須
 
 ### Phase 3 — mode / parameter
 
@@ -104,6 +126,8 @@ grep -rE 'Math\.random|rand\(\)|mt19937|srand\(' src/
 - replay protection (nonce / timestamp / counter)
 - domain separation (per-context tag)
 - multi-signature (m-of-n, threshold)
+- 比較は constant-time: Python `hmac.compare_digest` / Go `crypto/subtle.ConstantTimeCompare` / Node `crypto.timingSafeEqual` / Java `MessageDigest.isEqual`
+  → MAC / signature / token / session ID を `==` `equals()` `strcmp()` で比較していたら High (timing side-channel)
 ```
 
 ### Phase 7 — TLS / transport
@@ -147,6 +171,12 @@ semgrep crypto rules / bandit / gosec
 openssl / cryptography (Python) / ring / libsodium
 WebFetch / WebSearch
 Bash (sandbox)
+
+# grep + python3 のみの最低限環境向け fallback:
+#   semgrep / bandit / gosec 不在 → 本 Phase 1 の grep panel を直接実行
+#   findcrypt / signsrch 不在     → SHA-256 / AES sbox / DES round constant 等の hex literal を
+#                                    xxd binary | grep -E '6a09e667|428a2f98|63 7c 77 7b' で検出
+#   動的検証                       → python3 -c "from <target> import ...; ..." で PoC スクリプト
 ```
 
 ## Related Skills
